@@ -172,21 +172,42 @@
 	transition: color 0.25s ease;
 }
 
-/* Hover-State entspricht der Figma-Variante "Property 1=Variant2". */
-a.wp-block-ullmer-pill:hover,
+/*
+ * Hover-State entspricht der Figma-Variante "Property 1=Variant2": Flaeche und
+ * Schrift tauschen die Farben.
+ *
+ * Gilt bewusst fuer jede Pill, nicht nur fuer verlinkte. Vorher stand hier
+ * "a.wp-block-ullmer-pill" - unverlinkte Pills rendern als <div> und hatten
+ * damit gar keinen Hover.
+ */
+.wp-block-ullmer-pill:hover,
 a.wp-block-ullmer-pill:focus-visible {
 	border-color: var(--ullmer-pill-hover-border-color);
 	background-color: var(--ullmer-pill-hover-bg);
 }
 
-a.wp-block-ullmer-pill:hover .ullmer-pill__title,
+.wp-block-ullmer-pill:hover .ullmer-pill__title,
 a.wp-block-ullmer-pill:focus-visible .ullmer-pill__title {
 	color: var(--ullmer-pill-hover-title-color);
 }
 
-a.wp-block-ullmer-pill:hover .ullmer-pill__description,
+.wp-block-ullmer-pill:hover .ullmer-pill__description,
 a.wp-block-ullmer-pill:focus-visible .ullmer-pill__description {
 	color: var(--ullmer-pill-hover-desc-color);
+}
+
+/* Hover abschaltbar ueber die Blockeinstellung. */
+.wp-block-ullmer-pill-row.no-hover .wp-block-ullmer-pill:hover {
+	border-color: var(--ullmer-pill-border-color);
+	background-color: var(--ullmer-pill-bg);
+}
+
+.wp-block-ullmer-pill-row.no-hover .wp-block-ullmer-pill:hover .ullmer-pill__title {
+	color: var(--ullmer-pill-title-color);
+}
+
+.wp-block-ullmer-pill-row.no-hover .wp-block-ullmer-pill:hover .ullmer-pill__description {
+	color: var(--ullmer-pill-desc-color);
 }
 
 a.wp-block-ullmer-pill:focus-visible {

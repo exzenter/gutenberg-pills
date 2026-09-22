@@ -259,3 +259,31 @@ Ein Schalter „Auf kleinen Bildschirmen verkleinern" (standardmäßig an). Ein 
 
 Weil überall mit `calc()` gerechnet wird, funktioniert das mit jeder Einheit — auch mit `rem`
 oder `vw`.
+
+---
+
+## Neu in 1.2.0
+
+### Hover griff nur bei verlinkten Pills
+
+Die Hover-Regeln standen auf `a.wp-block-ullmer-pill:hover`. Unverlinkte Pills rendern als
+`<div>` — die hatten damit **gar keinen Hover**. Jetzt greift der Farbtausch bei jeder Pill.
+
+Der Fokus-Zustand bleibt bewusst auf `a`: ein `<div>` ist nicht fokussierbar.
+
+### Farben pro Pill überschreibbar
+
+Jede Pill hat ein eigenes Panel „Farben dieser Pill" mit denselben acht Farben wie die Reihe:
+Rahmen, Hintergrund, Titel, Beschreibung und die vier Hover-Varianten davon.
+
+**Leer gelassene Felder erben weiter von der Reihe.** Nur was gesetzt ist, überschreibt. Ein
+Knopf setzt alle eigenen Farben zurück.
+
+Technisch braucht das keine einzige zusätzliche CSS-Regel: Die Pill schreibt dieselben
+Custom Properties auf ihr eigenes Element, die sonst vom Container kommen. Die Kaskade erledigt
+den Rest.
+
+### Hover abschaltbar
+
+Schalter „Farben beim Hover tauschen" in der Reihe. Aus bedeutet: die Pills bleiben beim
+Überfahren unverändert.

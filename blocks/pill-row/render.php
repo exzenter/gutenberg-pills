@@ -32,6 +32,10 @@ if ( 'marquee' === $ullmer_layout && $ullmer_autoplay ) {
 	$ullmer_classes[] = 'is-autoplay';
 }
 
+if ( isset( $attributes['hoverEnabled'] ) && ! $attributes['hoverEnabled'] ) {
+	$ullmer_classes[] = 'no-hover';
+}
+
 /* Ohne diese Klasse greifen die Breakpoint-Regeln nicht. */
 if ( ! isset( $attributes['responsiveScaling'] ) || ! empty( $attributes['responsiveScaling'] ) ) {
 	$ullmer_classes[] = 'is-responsive';

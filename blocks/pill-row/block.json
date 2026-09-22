@@ -37,6 +37,7 @@
 		"pauseOnHover": { "type": "boolean", "default": true },
 		"justify": { "type": "string", "default": "center" },
 		"responsiveScaling": { "type": "boolean", "default": true },
+		"hoverEnabled": { "type": "boolean", "default": true },
 
 		"pillGap": { "type": "string", "default": "10px" },
 		"pillFontFamily": { "type": "string", "default": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },

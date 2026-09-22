@@ -6,7 +6,7 @@
 	"category": "design",
 	"icon": "tag",
 	"parent": [ "ullmer/pill-row" ],
-	"description": "Eine einzelne Pill mit Titel, optionaler Beschreibung und optionalem Link.",
+	"description": "Eine einzelne Pill mit Titel, optionaler Beschreibung, optionalem Link und optionalen eigenen Farben.",
 	"textdomain": "ullmer-pill-row",
 	"supports": {
 		"html": false,
@@ -18,7 +18,16 @@
 		"description": { "type": "string", "default": "" },
 		"url": { "type": "string", "default": "" },
 		"linkTarget": { "type": "string", "default": "" },
-		"rel": { "type": "string", "default": "" }
+		"rel": { "type": "string", "default": "" },
+
+		"borderColor": { "type": "string", "default": "" },
+		"backgroundColor": { "type": "string", "default": "" },
+		"titleColor": { "type": "string", "default": "" },
+		"descColor": { "type": "string", "default": "" },
+		"hoverBorderColor": { "type": "string", "default": "" },
+		"hoverBackgroundColor": { "type": "string", "default": "" },
+		"hoverTitleColor": { "type": "string", "default": "" },
+		"hoverDescColor": { "type": "string", "default": "" }
 	},
 	"editorScript": "ullmer-pill-editor",
 	"style": "ullmer-pill-row-style",

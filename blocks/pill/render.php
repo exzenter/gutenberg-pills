@@ -20,6 +20,32 @@ if ( '' === trim( wp_strip_all_tags( $ullmer_title ) ) && '' === trim( wp_strip_
 	return;
 }
 
+/*
+ * Eigene Farben dieser Pill.
+ *
+ * Es sind dieselben Custom Properties, die der Container setzt – hier nur auf
+ * dem Element selbst. Damit überschreiben sie den geerbten Wert, ohne dass es
+ * dafür eine einzige zusätzliche CSS-Regel braucht. Leere Felder erben weiter.
+ */
+$ullmer_color_map = array(
+	'borderColor'          => '--ullmer-pill-border-color',
+	'backgroundColor'      => '--ullmer-pill-bg',
+	'titleColor'           => '--ullmer-pill-title-color',
+	'descColor'            => '--ullmer-pill-desc-color',
+	'hoverBorderColor'     => '--ullmer-pill-hover-border-color',
+	'hoverBackgroundColor' => '--ullmer-pill-hover-bg',
+	'hoverTitleColor'      => '--ullmer-pill-hover-title-color',
+	'hoverDescColor'       => '--ullmer-pill-hover-desc-color',
+);
+
+$ullmer_style = '';
+foreach ( $ullmer_color_map as $ullmer_attr => $ullmer_property ) {
+	$ullmer_value = isset( $attributes[ $ullmer_attr ] ) ? trim( (string) $attributes[ $ullmer_attr ] ) : '';
+	if ( '' !== $ullmer_value ) {
+		$ullmer_style .= $ullmer_property . ':' . $ullmer_value . ';';
+	}
+}
+
 /* Verlinkt wird ein <a>, sonst ein <div> – niemals ein klickbares <div>. */
 $ullmer_tag        = '' !== $ullmer_url ? 'a' : 'div';
 $ullmer_link_attrs = '';
@@ -42,7 +68,13 @@ if ( '' !== $ullmer_url ) {
 	}
 }
 
-$ullmer_wrapper = get_block_wrapper_attributes();
+$ullmer_wrapper_args = array();
+if ( '' !== $ullmer_style ) {
+	$ullmer_wrapper_args['style'] = $ullmer_style;
+	$ullmer_wrapper_args['class'] = 'has-own-colors';
+}
+
+$ullmer_wrapper = get_block_wrapper_attributes( $ullmer_wrapper_args );
 
 /* Bewusst kein printf: Attributwerte dürfen ein Prozentzeichen enthalten. */
 echo '<' . esc_attr( $ullmer_tag ) . ' '

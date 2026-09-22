@@ -208,7 +208,7 @@
 			}
 
 			var blockProps = useBlockProps( {
-				className: 'ullmer-pill-row--' + a.layout + ( a.responsiveScaling ? ' is-responsive' : '' ),
+				className: 'ullmer-pill-row--' + a.layout + ( a.responsiveScaling ? ' is-responsive' : '' ) + ( a.hoverEnabled ? '' : ' no-hover' ),
 				style: cssVars( a )
 			} );
 
@@ -328,6 +328,12 @@
 					value: a.justify,
 					options: alignOptions,
 					onChange: function ( value ) { set( { justify: value } ); }
+				} ),
+				el( ToggleControl, {
+					label: __( 'Farben beim Hover tauschen', 'ullmer-pill-row' ),
+					help: __( 'Flaeche und Schrift tauschen die Farben, sobald der Zeiger darueber liegt.', 'ullmer-pill-row' ),
+					checked: !! a.hoverEnabled,
+					onChange: function ( value ) { set( { hoverEnabled: value } ); }
 				} ),
 				el( ToggleControl, {
 					label: __( 'Auf kleinen Bildschirmen verkleinern', 'ullmer-pill-row' ),
