@@ -1,0 +1,44 @@
+/**
+ * Ullmer Pill-Reihe – nur im Block-Editor geladen.
+ *
+ * Im Editor läuft kein Marquee. Der Track ist stattdessen horizontal
+ * scrollbar, damit alle Pills erreichbar und bearbeitbar bleiben.
+ */
+
+.wp-block-ullmer-pill-row .ullmer-pill-row__viewport {
+	overflow-x: auto;
+	scrollbar-width: thin;
+}
+
+.wp-block-ullmer-pill-row .ullmer-pill-row__track {
+	transform: none !important;
+}
+
+/* Der Inserter-Button am Ende der Reihe soll die Pills nicht auseinanderziehen. */
+.wp-block-ullmer-pill-row .block-list-appender {
+	display: flex;
+	flex: 0 0 auto;
+	align-items: center;
+	margin-inline-start: var(--ullmer-gap);
+}
+
+/* Platzhalter, solange eine Pill noch leer ist. */
+.wp-block-ullmer-pill .ullmer-pill__title:empty::before {
+	content: attr(data-placeholder);
+	opacity: 0.5;
+}
+
+/* Ausgewählte Pill im Editor klar hervorheben. */
+.wp-block-ullmer-pill.is-selected,
+.wp-block-ullmer-pill.has-child-selected {
+	outline: 1px solid var(--wp-admin-theme-color, #3858e9);
+	outline-offset: 2px;
+}
+
+/* Hinweiszeile unter dem Block, wenn Marquee aktiv ist. */
+.ullmer-pill-row__editor-note {
+	margin: 8px 0 0;
+	color: #757575;
+	font-size: 12px;
+	text-align: center;
+}

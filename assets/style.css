@@ -1,0 +1,197 @@
+/**
+ * Ullmer Pill-Reihe – Frontend- und Editor-Styles.
+ *
+ * Alle Werte hängen an CSS-Custom-Properties. Die Defaults hier entsprechen
+ * dem Figma-Redesign; der Block schreibt die im Editor gesetzten Werte als
+ * Inline-Style auf den Wrapper und überschreibt sie damit.
+ */
+
+.wp-block-ullmer-pill-row {
+	--ullmer-gap: 10px;
+	--ullmer-justify: center;
+
+	--ullmer-heading-font: Merriweather, Georgia, "Times New Roman", serif;
+	--ullmer-heading-size: 40px;
+	--ullmer-heading-line-height: 53px;
+	--ullmer-heading-letter-spacing: 0.8px;
+	--ullmer-heading-accent-color: #23bae2;
+	--ullmer-heading-base-color: #000000;
+	--ullmer-heading-gap: 72px;
+
+	--ullmer-pill-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	--ullmer-pill-border-width: 2px;
+	--ullmer-pill-border-radius: 100px;
+	--ullmer-pill-padding-x: 72px;
+	--ullmer-pill-padding-y: 52px;
+	--ullmer-pill-title-size: 33px;
+	--ullmer-pill-title-weight: 500;
+	--ullmer-pill-title-transform: uppercase;
+	--ullmer-pill-desc-size: 18px;
+	--ullmer-pill-desc-line-height: 35px;
+
+	--ullmer-pill-border-color: #23bae2;
+	--ullmer-pill-bg: transparent;
+	--ullmer-pill-title-color: #23bae2;
+	--ullmer-pill-desc-color: #000000;
+	--ullmer-pill-hover-border-color: #23bae2;
+	--ullmer-pill-hover-bg: #23bae2;
+	--ullmer-pill-hover-title-color: #ffffff;
+	--ullmer-pill-hover-desc-color: #ffffff;
+}
+
+/* --- Überschrift ------------------------------------------------------- */
+
+.ullmer-pill-row__heading {
+	margin: 0 0 var(--ullmer-heading-gap);
+	font-family: var(--ullmer-heading-font);
+	font-size: var(--ullmer-heading-size);
+	font-weight: 700;
+	line-height: var(--ullmer-heading-line-height);
+	letter-spacing: var(--ullmer-heading-letter-spacing);
+	text-align: center;
+	text-wrap: balance;
+}
+
+.ullmer-pill-row__heading-em {
+	color: var(--ullmer-heading-accent-color);
+	font-style: italic;
+}
+
+.ullmer-pill-row__heading-base {
+	color: var(--ullmer-heading-base-color);
+	font-style: normal;
+}
+
+/* --- Viewport und Track ------------------------------------------------ */
+
+.ullmer-pill-row__viewport {
+	position: relative;
+	overflow: hidden;
+}
+
+.ullmer-pill-row__track {
+	position: relative;
+	display: flex;
+	align-items: stretch;
+	gap: var(--ullmer-gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Statisch: bricht um und bleibt in der Contentbreite. */
+.ullmer-pill-row--static .ullmer-pill-row__track {
+	flex-wrap: wrap;
+	justify-content: var(--ullmer-justify);
+}
+
+/* Marquee: eine Zeile, Breite folgt dem Inhalt. */
+.ullmer-pill-row--marquee .ullmer-pill-row__track {
+	flex-wrap: nowrap;
+	width: max-content;
+	will-change: transform;
+}
+
+/*
+ * Manuell scrollbar – gesetzt von view.js, wenn Autoplay aus ist oder der
+ * Nutzer reduzierte Bewegung angefordert hat.
+ */
+.ullmer-pill-row__viewport.is-scrollable {
+	overflow-x: auto;
+	scrollbar-width: thin;
+	-webkit-overflow-scrolling: touch;
+}
+
+.ullmer-pill-row__viewport.is-scrollable .ullmer-pill-row__track {
+	transform: none !important;
+}
+
+/* --- Pill -------------------------------------------------------------- */
+
+.wp-block-ullmer-pill {
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: var(--ullmer-pill-padding-y) var(--ullmer-pill-padding-x);
+	border: var(--ullmer-pill-border-width) solid var(--ullmer-pill-border-color);
+	border-radius: var(--ullmer-pill-border-radius);
+	background-color: var(--ullmer-pill-bg);
+	font-family: var(--ullmer-pill-font);
+	text-align: center;
+	text-decoration: none;
+	transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.ullmer-pill__title {
+	display: block;
+	color: var(--ullmer-pill-title-color);
+	font-size: var(--ullmer-pill-title-size);
+	font-weight: var(--ullmer-pill-title-weight);
+	line-height: 1.2;
+	text-transform: var(--ullmer-pill-title-transform);
+	transition: color 0.25s ease;
+}
+
+.ullmer-pill__description {
+	display: block;
+	color: var(--ullmer-pill-desc-color);
+	font-size: var(--ullmer-pill-desc-size);
+	font-weight: 400;
+	line-height: var(--ullmer-pill-desc-line-height);
+	text-transform: none;
+	transition: color 0.25s ease;
+}
+
+/* Hover-State entspricht der Figma-Variante "Property 1=Variant2". */
+a.wp-block-ullmer-pill:hover,
+a.wp-block-ullmer-pill:focus-visible {
+	border-color: var(--ullmer-pill-hover-border-color);
+	background-color: var(--ullmer-pill-hover-bg);
+}
+
+a.wp-block-ullmer-pill:hover .ullmer-pill__title,
+a.wp-block-ullmer-pill:focus-visible .ullmer-pill__title {
+	color: var(--ullmer-pill-hover-title-color);
+}
+
+a.wp-block-ullmer-pill:hover .ullmer-pill__description,
+a.wp-block-ullmer-pill:focus-visible .ullmer-pill__description {
+	color: var(--ullmer-pill-hover-desc-color);
+}
+
+a.wp-block-ullmer-pill:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 4px;
+}
+
+/* --- Responsiv --------------------------------------------------------- */
+
+@media (max-width: 781px) {
+	.wp-block-ullmer-pill-row {
+		--ullmer-heading-size: clamp(26px, 6vw, 40px);
+		--ullmer-heading-line-height: 1.3;
+		--ullmer-heading-gap: 40px;
+		--ullmer-pill-title-size: clamp(18px, 4.6vw, 33px);
+		--ullmer-pill-desc-size: clamp(14px, 3.6vw, 18px);
+		--ullmer-pill-desc-line-height: 1.6;
+		--ullmer-pill-padding-x: clamp(24px, 9vw, 72px);
+		--ullmer-pill-padding-y: clamp(20px, 6vw, 52px);
+	}
+}
+
+/* --- Reduzierte Bewegung ----------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.ullmer-pill-row__track {
+		transform: none !important;
+	}
+
+	.wp-block-ullmer-pill,
+	.ullmer-pill__title,
+	.ullmer-pill__description {
+		transition: none;
+	}
+}

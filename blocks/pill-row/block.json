@@ -1,0 +1,66 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ullmer/pill-row",
+	"title": "Pill-Reihe",
+	"category": "design",
+	"icon": "marker",
+	"description": "Eine Reihe abgerundeter Pills mit optionaler zweifarbiger Überschrift – statisch oder als endlos laufender Marquee.",
+	"keywords": [ "pill", "pills", "leistungen", "marquee", "slider", "chips", "ullmer" ],
+	"textdomain": "ullmer-pill-row",
+	"supports": {
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"html": false,
+		"spacing": {
+			"margin": [ "top", "bottom" ],
+			"padding": true
+		}
+	},
+	"attributes": {
+		"showHeading": { "type": "boolean", "default": true },
+		"headingPart1": { "type": "string", "default": "unsere leistungen" },
+		"headingPart2": { "type": "string", "default": "im überblick:" },
+		"headingFirstEmphasized": { "type": "boolean", "default": true },
+		"headingFontFamily": { "type": "string", "default": "Merriweather, Georgia, 'Times New Roman', serif" },
+		"headingFontSize": { "type": "number", "default": 40 },
+		"headingLineHeight": { "type": "number", "default": 53 },
+		"headingLetterSpacing": { "type": "number", "default": 0.8 },
+		"headingAccentColor": { "type": "string", "default": "#23bae2" },
+		"headingBaseColor": { "type": "string", "default": "#000000" },
+		"headingGap": { "type": "number", "default": 72 },
+
+		"layout": { "type": "string", "default": "marquee" },
+		"autoplay": { "type": "boolean", "default": true },
+		"marqueeSpeed": { "type": "number", "default": 40 },
+		"marqueeDirection": { "type": "string", "default": "left" },
+		"pauseOnHover": { "type": "boolean", "default": true },
+		"justify": { "type": "string", "default": "center" },
+
+		"pillGap": { "type": "number", "default": 10 },
+		"pillFontFamily": { "type": "string", "default": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+		"pillBorderWidth": { "type": "number", "default": 2 },
+		"pillBorderRadius": { "type": "number", "default": 100 },
+		"pillPaddingX": { "type": "number", "default": 72 },
+		"pillPaddingY": { "type": "number", "default": 52 },
+		"pillTitleFontSize": { "type": "number", "default": 33 },
+		"pillTitleWeight": { "type": "number", "default": 500 },
+		"pillTitleUppercase": { "type": "boolean", "default": true },
+		"pillDescFontSize": { "type": "number", "default": 18 },
+		"pillDescLineHeight": { "type": "number", "default": 35 },
+
+		"pillBorderColor": { "type": "string", "default": "#23bae2" },
+		"pillBackgroundColor": { "type": "string", "default": "" },
+		"pillTitleColor": { "type": "string", "default": "#23bae2" },
+		"pillDescColor": { "type": "string", "default": "#000000" },
+		"pillHoverBorderColor": { "type": "string", "default": "#23bae2" },
+		"pillHoverBackgroundColor": { "type": "string", "default": "#23bae2" },
+		"pillHoverTitleColor": { "type": "string", "default": "#ffffff" },
+		"pillHoverDescColor": { "type": "string", "default": "#ffffff" }
+	},
+	"editorScript": "ullmer-pill-row-editor",
+	"viewScript": "ullmer-pill-row-view",
+	"style": "ullmer-pill-row-style",
+	"editorStyle": "ullmer-pill-row-editor-style",
+	"render": "file:./render.php"
+}

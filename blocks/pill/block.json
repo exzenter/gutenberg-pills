@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ullmer/pill",
+	"title": "Pill",
+	"category": "design",
+	"icon": "tag",
+	"parent": [ "ullmer/pill-row" ],
+	"description": "Eine einzelne Pill mit Titel, optionaler Beschreibung und optionalem Link.",
+	"textdomain": "ullmer-pill-row",
+	"supports": {
+		"html": false,
+		"reusable": false,
+		"customClassName": true
+	},
+	"attributes": {
+		"title": { "type": "string", "default": "" },
+		"description": { "type": "string", "default": "" },
+		"url": { "type": "string", "default": "" },
+		"linkTarget": { "type": "string", "default": "" },
+		"rel": { "type": "string", "default": "" }
+	},
+	"editorScript": "ullmer-pill-editor",
+	"style": "ullmer-pill-row-style",
+	"editorStyle": "ullmer-pill-row-editor-style",
+	"render": "file:./render.php"
+}

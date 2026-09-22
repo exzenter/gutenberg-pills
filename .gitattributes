@@ -1,0 +1,13 @@
+# Im Repository immer LF, im Arbeitsverzeichnis was das System will.
+* text=auto eol=lf
+
+*.php text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+
+# Nicht ins Release-ZIP und nicht in ein Export-Archiv.
+/.gitattributes export-ignore
+/.gitignore    export-ignore

@@ -1,0 +1,19 @@
+# Build-Artefakte
+*.zip
+
+# Abhängigkeiten – dieses Plugin braucht keine, aber falls doch mal Tooling dazukommt
+node_modules/
+vendor/
+
+# Editor und Betriebssystem
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.sublime-*
+
+# Logs
+*.log
+
+# Übersetzungen: .pot und .po gehören ins Repo, kompilierte .mo nicht
+languages/*.mo
