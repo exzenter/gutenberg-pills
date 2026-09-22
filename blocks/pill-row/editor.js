@@ -14,7 +14,9 @@
 	var useBlockProps = blockEditor.useBlockProps;
 	var useInnerBlocksProps = blockEditor.useInnerBlocksProps;
 	var InspectorControls = blockEditor.InspectorControls;
+	var BlockControls = blockEditor.BlockControls;
 	var PanelColorSettings = blockEditor.PanelColorSettings;
+	var AlignmentControl = blockEditor.AlignmentControl || blockEditor.AlignmentToolbar;
 
 	var PanelBody = components.PanelBody;
 	var TextControl = components.TextControl;
@@ -22,10 +24,25 @@
 	var ToggleControl = components.ToggleControl;
 	var RangeControl = components.RangeControl;
 	var SelectControl = components.SelectControl;
+	var FontSizePicker = components.FontSizePicker;
+
+	/* Je nach WordPress-Version stabil oder noch als __experimental exportiert. */
+	var UnitControl = components.__experimentalUnitControl || components.UnitControl;
+	var ToggleGroup = components.__experimentalToggleGroupControl || components.ToggleGroupControl;
+	var ToggleGroupOption = components.__experimentalToggleGroupControlOption || components.ToggleGroupControlOption;
 
 	var ALLOWED_BLOCKS = [ 'ullmer/pill' ];
 
-	/* Vorbelegung eines frisch eingefügten Blocks – die Leistungen aus dem Redesign. */
+	/* Einheiten, die in jedem Maß-Feld zur Auswahl stehen. */
+	var UNITS = [
+		{ value: 'px', label: 'px', default: 0 },
+		{ value: 'rem', label: 'rem', default: 0 },
+		{ value: 'em', label: 'em', default: 0 },
+		{ value: 'vw', label: 'vw', default: 0 },
+		{ value: 'vh', label: 'vh', default: 0 },
+		{ value: '%', label: '%', default: 0 }
+	];
+
 	var TEMPLATE = [
 		[ 'ullmer/pill', { title: 'Mietwäsche-Sortiment' } ],
 		[ 'ullmer/pill', { title: 'Mietberufsbekleidung' } ],
@@ -35,6 +52,49 @@
 	];
 
 	/**
+	 * Macht aus einem Attributwert eine CSS-Länge.
+	 * Version 1.0 speicherte blanke Zahlen – die gelten weiterhin als Pixel.
+	 *
+	 * @param {*} value Attributwert.
+	 * @return {string} Länge mit Einheit.
+	 */
+	function toLength( value ) {
+		if ( value === null || value === undefined || value === '' ) {
+			return '';
+		}
+		if ( typeof value === 'number' ) {
+			return value + 'px';
+		}
+		return String( value );
+	}
+
+	/**
+	 * Liefert die Schriftgrößen-Presets des Themes (Small, Medium, Large …).
+	 *
+	 * @return {Array} Preset-Liste, notfalls leer.
+	 */
+	function useThemeFontSizes() {
+		var raw = null;
+
+		if ( typeof blockEditor.useSettings === 'function' ) {
+			var result = blockEditor.useSettings( 'typography.fontSizes' );
+			raw = result && result[ 0 ];
+		} else if ( typeof blockEditor.useSetting === 'function' ) {
+			raw = blockEditor.useSetting( 'typography.fontSizes' );
+		}
+
+		if ( ! raw ) {
+			return [];
+		}
+		if ( Array.isArray( raw ) ) {
+			return raw;
+		}
+
+		/* Manche Themes liefern nach Herkunft gruppiert: theme, default, custom. */
+		return [].concat( raw.theme || [], raw[ 'default' ] || [], raw.custom || [] );
+	}
+
+	/**
 	 * Übersetzt die Attribute in CSS-Custom-Properties.
 	 * Muss synchron zu ullmer_pill_row_css_vars() in der PHP-Datei bleiben.
 	 *
@@ -42,32 +102,26 @@
 	 * @return {Object} Style-Objekt für den Wrapper.
 	 */
 	function cssVars( a ) {
-		var px = function ( value ) {
-			return ( value === '' || value === null || value === undefined )
-				? null
-				: parseFloat( value ) + 'px';
-		};
-
 		var vars = {
-			'--ullmer-gap': px( a.pillGap ),
+			'--ullmer-gap': toLength( a.pillGap ),
 			'--ullmer-justify': a.justify,
 			'--ullmer-heading-font': a.headingFontFamily,
-			'--ullmer-heading-size': px( a.headingFontSize ),
-			'--ullmer-heading-line-height': px( a.headingLineHeight ),
-			'--ullmer-heading-letter-spacing': px( a.headingLetterSpacing ),
+			'--ullmer-heading-size': toLength( a.headingFontSize ),
+			'--ullmer-heading-line-height': toLength( a.headingLineHeight ),
+			'--ullmer-heading-letter-spacing': toLength( a.headingLetterSpacing ),
 			'--ullmer-heading-accent-color': a.headingAccentColor,
 			'--ullmer-heading-base-color': a.headingBaseColor,
-			'--ullmer-heading-gap': px( a.headingGap ),
+			'--ullmer-heading-gap': toLength( a.headingGap ),
 			'--ullmer-pill-font': a.pillFontFamily,
-			'--ullmer-pill-border-width': px( a.pillBorderWidth ),
-			'--ullmer-pill-border-radius': px( a.pillBorderRadius ),
-			'--ullmer-pill-padding-x': px( a.pillPaddingX ),
-			'--ullmer-pill-padding-y': px( a.pillPaddingY ),
-			'--ullmer-pill-title-size': px( a.pillTitleFontSize ),
+			'--ullmer-pill-border-width': toLength( a.pillBorderWidth ),
+			'--ullmer-pill-border-radius': toLength( a.pillBorderRadius ),
+			'--ullmer-pill-padding-x': toLength( a.pillPaddingX ),
+			'--ullmer-pill-padding-y': toLength( a.pillPaddingY ),
+			'--ullmer-pill-title-size': toLength( a.pillTitleFontSize ),
 			'--ullmer-pill-title-weight': a.pillTitleWeight,
 			'--ullmer-pill-title-transform': a.pillTitleUppercase ? 'uppercase' : 'none',
-			'--ullmer-pill-desc-size': px( a.pillDescFontSize ),
-			'--ullmer-pill-desc-line-height': px( a.pillDescLineHeight ),
+			'--ullmer-pill-desc-size': toLength( a.pillDescFontSize ),
+			'--ullmer-pill-desc-line-height': toLength( a.pillDescLineHeight ),
 			'--ullmer-pill-border-color': a.pillBorderColor,
 			'--ullmer-pill-bg': a.pillBackgroundColor,
 			'--ullmer-pill-title-color': a.pillTitleColor,
@@ -94,9 +148,67 @@
 			var a = props.attributes;
 			var set = props.setAttributes;
 			var isMarquee = a.layout === 'marquee';
+			var isStacked = a.layout === 'stacked';
+			var themeFontSizes = useThemeFontSizes();
+
+			/**
+			 * Maß-Feld: Zahleneingabe plus Einheiten-Auswahl, wie in den Core-Blöcken.
+			 *
+			 * @param {string} label Beschriftung.
+			 * @param {string} key   Attributname.
+			 * @return {Object} Element.
+			 */
+			function dimension( label, key ) {
+				return el( UnitControl, {
+					key: key,
+					label: label,
+					value: toLength( a[ key ] ),
+					units: UNITS,
+					min: 0,
+					size: '__unstable-large',
+					__next40pxDefaultSize: true,
+					__nextHasNoMarginBottom: true,
+					onChange: function ( value ) {
+						var patch = {};
+						patch[ key ] = ( value === undefined || value === null ) ? '' : String( value );
+						set( patch );
+					}
+				} );
+			}
+
+			/**
+			 * Schriftgrößen-Feld mit den Theme-Presets (S/M/L/XL) plus freier Eingabe
+			 * samt Einheiten-Auswahl.
+			 *
+			 * @param {string} label Beschriftung.
+			 * @param {string} key   Attributname.
+			 * @return {Object} Element.
+			 */
+			function fontSize( label, key ) {
+				if ( ! FontSizePicker ) {
+					return dimension( label, key );
+				}
+				return el( 'div', { key: key, className: 'ullmer-font-size-field' },
+					el( FontSizePicker, {
+						label: label,
+						fontSizes: themeFontSizes,
+						value: toLength( a[ key ] ),
+						units: [ 'px', 'rem', 'em', 'vw', 'vh', '%' ],
+						withSlider: false,
+						withReset: true,
+						size: '__unstable-large',
+						__nextHasNoMarginBottom: true,
+						onChange: function ( value ) {
+							var patch = {};
+							patch[ key ] = ( value === undefined || value === null ) ? '' : String( value );
+							set( patch );
+						}
+					} )
+				);
+			}
 
 			var blockProps = useBlockProps( {
-				className: 'ullmer-pill-row--' + a.layout,
+				className: 'ullmer-pill-row--' + a.layout + ( a.responsiveScaling ? ' is-responsive' : '' ),
 				style: cssVars( a )
 			} );
 
@@ -105,10 +217,24 @@
 				{
 					allowedBlocks: ALLOWED_BLOCKS,
 					template: TEMPLATE,
-					orientation: 'horizontal',
+					orientation: isStacked ? 'vertical' : 'horizontal',
 					templateLock: false
 				}
 			);
+
+			/* --- Werkzeugleiste: Ausrichtung -------------------------------- */
+
+			var alignToJustify = { left: 'flex-start', center: 'center', right: 'flex-end' };
+			var justifyToAlign = { 'flex-start': 'left', center: 'center', 'flex-end': 'right' };
+
+			var toolbar = AlignmentControl ? el( BlockControls, { group: 'block' },
+				el( AlignmentControl, {
+					value: justifyToAlign[ a.justify ] || 'center',
+					onChange: function ( value ) {
+						set( { justify: alignToJustify[ value ] || 'center' } );
+					}
+				} )
+			) : null;
 
 			/* --- Sidebar: Überschrift --------------------------------------- */
 
@@ -147,54 +273,67 @@
 						rows: 2,
 						onChange: function ( value ) { set( { headingFontFamily: value } ); }
 					} ),
-					el( RangeControl, {
-						label: __( 'Schriftgröße (px)', 'ullmer-pill-row' ),
-						value: a.headingFontSize, min: 14, max: 96,
-						onChange: function ( value ) { set( { headingFontSize: value } ); }
-					} ),
-					el( RangeControl, {
-						label: __( 'Zeilenhöhe (px)', 'ullmer-pill-row' ),
-						value: a.headingLineHeight, min: 16, max: 120,
-						onChange: function ( value ) { set( { headingLineHeight: value } ); }
-					} ),
-					el( RangeControl, {
-						label: __( 'Laufweite (px)', 'ullmer-pill-row' ),
-						value: a.headingLetterSpacing, min: -2, max: 8, step: 0.1,
-						onChange: function ( value ) { set( { headingLetterSpacing: value } ); }
-					} ),
-					el( RangeControl, {
-						label: __( 'Abstand zu den Pills (px)', 'ullmer-pill-row' ),
-						value: a.headingGap, min: 0, max: 160,
-						onChange: function ( value ) { set( { headingGap: value } ); }
-					} )
+					fontSize( __( 'Schriftgröße', 'ullmer-pill-row' ), 'headingFontSize' ),
+					dimension( __( 'Zeilenhöhe', 'ullmer-pill-row' ), 'headingLineHeight' ),
+					dimension( __( 'Laufweite', 'ullmer-pill-row' ), 'headingLetterSpacing' ),
+					dimension( __( 'Abstand zu den Pills', 'ullmer-pill-row' ), 'headingGap' )
 				)
 			);
 
 			/* --- Sidebar: Darstellung --------------------------------------- */
 
+			var layoutOptions = [
+				{ label: __( 'Untereinander', 'ullmer-pill-row' ), value: 'stacked' },
+				{ label: __( 'Nebeneinander', 'ullmer-pill-row' ), value: 'static' },
+				{ label: __( 'Laufband', 'ullmer-pill-row' ), value: 'marquee' }
+			];
+
+			var layoutControl;
+			if ( ToggleGroup && ToggleGroupOption ) {
+				layoutControl = el( ToggleGroup, {
+					label: __( 'Modus', 'ullmer-pill-row' ),
+					value: a.layout,
+					isBlock: true,
+					__next40pxDefaultSize: true,
+					__nextHasNoMarginBottom: true,
+					onChange: function ( value ) { set( { layout: value } ); }
+				}, layoutOptions.map( function ( o ) {
+					return el( ToggleGroupOption, { key: o.value, value: o.value, label: o.label } );
+				} ) );
+			} else {
+				layoutControl = el( SelectControl, {
+					label: __( 'Modus', 'ullmer-pill-row' ),
+					value: a.layout,
+					options: layoutOptions,
+					onChange: function ( value ) { set( { layout: value } ); }
+				} );
+			}
+
+			var alignOptions = [
+				{ label: __( 'Links', 'ullmer-pill-row' ), value: 'flex-start' },
+				{ label: __( 'Zentriert', 'ullmer-pill-row' ), value: 'center' },
+				{ label: __( 'Rechts', 'ullmer-pill-row' ), value: 'flex-end' }
+			];
+			if ( ! isStacked ) {
+				alignOptions.push( { label: __( 'Gleichmäßig verteilt', 'ullmer-pill-row' ), value: 'space-between' } );
+			}
+
 			var layoutPanel = el( PanelBody, {
 				title: __( 'Darstellung', 'ullmer-pill-row' ),
 				initialOpen: false
 			},
-				el( SelectControl, {
-					label: __( 'Modus', 'ullmer-pill-row' ),
-					value: a.layout,
-					options: [
-						{ label: __( 'Statisch (bricht um)', 'ullmer-pill-row' ), value: 'static' },
-						{ label: __( 'Laufband', 'ullmer-pill-row' ), value: 'marquee' }
-					],
-					onChange: function ( value ) { set( { layout: value } ); }
-				} ),
-				a.layout === 'static' && el( SelectControl, {
+				layoutControl,
+				! isMarquee && el( SelectControl, {
 					label: __( 'Ausrichtung', 'ullmer-pill-row' ),
 					value: a.justify,
-					options: [
-						{ label: __( 'Zentriert', 'ullmer-pill-row' ), value: 'center' },
-						{ label: __( 'Links', 'ullmer-pill-row' ), value: 'flex-start' },
-						{ label: __( 'Rechts', 'ullmer-pill-row' ), value: 'flex-end' },
-						{ label: __( 'Gleichmäßig verteilt', 'ullmer-pill-row' ), value: 'space-between' }
-					],
+					options: alignOptions,
 					onChange: function ( value ) { set( { justify: value } ); }
+				} ),
+				el( ToggleControl, {
+					label: __( 'Auf kleinen Bildschirmen verkleinern', 'ullmer-pill-row' ),
+					help: __( 'Skaliert Schrift, Innenabstände, Abstand und Radius stufenweise herunter.', 'ullmer-pill-row' ),
+					checked: !! a.responsiveScaling,
+					onChange: function ( value ) { set( { responsiveScaling: value } ); }
 				} ),
 				isMarquee && el( Fragment, null,
 					el( ToggleControl, {
@@ -208,6 +347,8 @@
 					a.autoplay && el( RangeControl, {
 						label: __( 'Geschwindigkeit (px/s)', 'ullmer-pill-row' ),
 						value: a.marqueeSpeed, min: 5, max: 200,
+						__next40pxDefaultSize: true,
+						__nextHasNoMarginBottom: true,
 						onChange: function ( value ) { set( { marqueeSpeed: value } ); }
 					} ),
 					a.autoplay && el( SelectControl, {
@@ -239,39 +380,17 @@
 					rows: 2,
 					onChange: function ( value ) { set( { pillFontFamily: value } ); }
 				} ),
-				el( RangeControl, {
-					label: __( 'Abstand zwischen Pills (px)', 'ullmer-pill-row' ),
-					value: a.pillGap, min: 0, max: 80,
-					onChange: function ( value ) { set( { pillGap: value } ); }
-				} ),
-				el( RangeControl, {
-					label: __( 'Rahmenstärke (px)', 'ullmer-pill-row' ),
-					value: a.pillBorderWidth, min: 0, max: 12,
-					onChange: function ( value ) { set( { pillBorderWidth: value } ); }
-				} ),
-				el( RangeControl, {
-					label: __( 'Eckenradius (px)', 'ullmer-pill-row' ),
-					value: a.pillBorderRadius, min: 0, max: 200,
-					onChange: function ( value ) { set( { pillBorderRadius: value } ); }
-				} ),
-				el( RangeControl, {
-					label: __( 'Innenabstand horizontal (px)', 'ullmer-pill-row' ),
-					value: a.pillPaddingX, min: 0, max: 200,
-					onChange: function ( value ) { set( { pillPaddingX: value } ); }
-				} ),
-				el( RangeControl, {
-					label: __( 'Innenabstand vertikal (px)', 'ullmer-pill-row' ),
-					value: a.pillPaddingY, min: 0, max: 160,
-					onChange: function ( value ) { set( { pillPaddingY: value } ); }
-				} ),
-				el( RangeControl, {
-					label: __( 'Titel – Schriftgröße (px)', 'ullmer-pill-row' ),
-					value: a.pillTitleFontSize, min: 10, max: 72,
-					onChange: function ( value ) { set( { pillTitleFontSize: value } ); }
-				} ),
+				dimension( __( 'Abstand zwischen Pills', 'ullmer-pill-row' ), 'pillGap' ),
+				dimension( __( 'Rahmenstärke', 'ullmer-pill-row' ), 'pillBorderWidth' ),
+				dimension( __( 'Eckenradius', 'ullmer-pill-row' ), 'pillBorderRadius' ),
+				dimension( __( 'Innenabstand horizontal', 'ullmer-pill-row' ), 'pillPaddingX' ),
+				dimension( __( 'Innenabstand vertikal', 'ullmer-pill-row' ), 'pillPaddingY' ),
+				fontSize( __( 'Titel – Schriftgröße', 'ullmer-pill-row' ), 'pillTitleFontSize' ),
 				el( RangeControl, {
 					label: __( 'Titel – Schriftstärke', 'ullmer-pill-row' ),
 					value: a.pillTitleWeight, min: 100, max: 900, step: 100,
+					__next40pxDefaultSize: true,
+					__nextHasNoMarginBottom: true,
 					onChange: function ( value ) { set( { pillTitleWeight: value } ); }
 				} ),
 				el( ToggleControl, {
@@ -279,16 +398,8 @@
 					checked: !! a.pillTitleUppercase,
 					onChange: function ( value ) { set( { pillTitleUppercase: value } ); }
 				} ),
-				el( RangeControl, {
-					label: __( 'Beschreibung – Schriftgröße (px)', 'ullmer-pill-row' ),
-					value: a.pillDescFontSize, min: 8, max: 48,
-					onChange: function ( value ) { set( { pillDescFontSize: value } ); }
-				} ),
-				el( RangeControl, {
-					label: __( 'Beschreibung – Zeilenhöhe (px)', 'ullmer-pill-row' ),
-					value: a.pillDescLineHeight, min: 10, max: 80,
-					onChange: function ( value ) { set( { pillDescLineHeight: value } ); }
-				} )
+				fontSize( __( 'Beschreibung – Schriftgröße', 'ullmer-pill-row' ), 'pillDescFontSize' ),
+				dimension( __( 'Beschreibung – Zeilenhöhe', 'ullmer-pill-row' ), 'pillDescLineHeight' )
 			);
 
 			/* --- Sidebar: Farben -------------------------------------------- */
@@ -377,6 +488,7 @@
 				: null;
 
 			return el( Fragment, null,
+				toolbar,
 				el( InspectorControls, null, headingPanel, layoutPanel, pillPanel, colorPanel ),
 				el( 'div', blockProps,
 					heading,

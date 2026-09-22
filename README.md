@@ -203,3 +203,59 @@ Das Design stammt aus dem Ullmer-Website-Redesign. Die Bezeichner im Code (`ullm
 ## Lizenz
 
 GPL-2.0-or-later · © exzent
+
+---
+
+## Neu in 1.1.0
+
+### Zwei Fehler behoben
+
+**Unterer Rahmen war nur halb so stark.** Der Viewport hatte `overflow: hidden`. Das erzwingt
+auch auf der vertikalen Achse einen Clip, und weil Viewport- und Pill-Höhe exakt gleich sind,
+fiel die letzte halbe Pixelzeile des unteren Rahmens weg — er sah 1px statt 2px stark aus.
+
+**Innenabstand wurde abgeschnitten.** Gleiche Ursache: alles, was die Pill höher machte, lief
+gegen denselben vertikalen Clip.
+
+Beides behoben mit `overflow-x: clip` statt `hidden`. Anders als `hidden` zwingt `clip` die
+andere Achse nicht auf `auto`, `overflow-y: visible` bleibt also erhalten. Statischer und
+gestapelter Modus clippen jetzt gar nicht mehr.
+
+### Einheiten statt reiner Pixel
+
+Jedes Maß-Feld ist jetzt ein `UnitControl` wie in den Core-Blöcken: Zahl eingeben, Einheit
+daneben wählen — **px, rem, em, vw, vh, %**. Keine Schieberegler mehr für Maße.
+
+Werte aus 1.0.0 (blanke Zahlen) werden weiterhin als Pixel gelesen, in PHP wie im Editor. Ein
+Update bricht nichts.
+
+### Schriftgrößen aus dem Theme
+
+Die drei Schriftgrößen-Felder nutzen den `FontSizePicker` und zeigen die Presets des aktiven
+Themes — bei Twenty Twenty-Five also Small, Medium, Large, X-Large. Daneben bleibt die freie
+Eingabe mit Einheiten-Auswahl.
+
+### Modus „Untereinander"
+
+Dritter Modus neben „Nebeneinander" und „Laufband": Pills stehen in einer Spalte, nichts
+bewegt sich.
+
+### Ausrichtung
+
+Links, zentriert, rechts — in der Block-Werkzeugleiste (wie bei Absätzen) und in der
+Seitenleiste. Im Modus „Nebeneinander" zusätzlich „Gleichmäßig verteilt".
+
+### Responsive
+
+Ein Schalter „Auf kleinen Bildschirmen verkleinern" (standardmäßig an). Ein einziger Faktor
+`--ullmer-scale` skaliert Schrift, Innenabstände, Abstand und Radius über vier Stufen:
+
+| Breite | Faktor |
+|---|---|
+| ≤ 1200px | 0,82 |
+| ≤ 900px | 0,68 |
+| ≤ 600px | 0,55 |
+| ≤ 400px | 0,46 |
+
+Weil überall mit `calc()` gerechnet wird, funktioniert das mit jeder Einheit — auch mit `rem`
+oder `vw`.

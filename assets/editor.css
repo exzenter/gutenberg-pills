@@ -42,3 +42,18 @@
 	font-size: 12px;
 	text-align: center;
 }
+
+/* Gestapelter Modus: Inserter gehört unter die Pills, nicht daneben. */
+.wp-block-ullmer-pill-row.ullmer-pill-row--stacked .ullmer-pill-row__track {
+	flex-direction: column;
+}
+
+.wp-block-ullmer-pill-row.ullmer-pill-row--stacked .block-list-appender {
+	margin-block-start: var(--ullmer-gap);
+	margin-inline-start: 0;
+}
+
+/* Schriftgrößen-Feld etwas Luft geben, damit es nicht am Nachbarn klebt. */
+.ullmer-font-size-field {
+	margin-block-end: 24px;
+}

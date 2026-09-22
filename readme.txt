@@ -4,7 +4,7 @@ Tags: block, gutenberg, pills, marquee, slider
 Requires at least: 6.1
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,15 @@ font-family-Stacks.
 Ja, über CSS-Custom-Properties auf .wp-block-ullmer-pill-row. Siehe README.md.
 
 == Changelog ==
+
+= 1.1.0 =
+* Behoben: unterer Rahmen war nur halb so stark (vertikaler Clip durch overflow: hidden).
+* Behoben: zusaetzlicher Innenabstand wurde abgeschnitten, gleiche Ursache.
+* Maß-Felder mit Einheiten-Auswahl (px, rem, em, vw, vh, %) statt Schiebereglern.
+* Schriftgroessen nutzen die Presets des Themes (Small, Medium, Large).
+* Neuer Modus "Untereinander".
+* Ausrichtung links/zentriert/rechts in Werkzeugleiste und Seitenleiste.
+* Abschaltbare responsive Verkleinerung ueber vier Breakpoints.
 
 = 1.0.0 =
 * Erste Version.

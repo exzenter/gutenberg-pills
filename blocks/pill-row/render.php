@@ -16,15 +16,25 @@ if ( '' === trim( (string) $content ) ) {
 	return;
 }
 
-$ullmer_layout    = ( isset( $attributes['layout'] ) && 'static' === $attributes['layout'] ) ? 'static' : 'marquee';
+$ullmer_layout = isset( $attributes['layout'] ) ? (string) $attributes['layout'] : 'marquee';
+if ( ! in_array( $ullmer_layout, array( 'static', 'marquee', 'stacked' ), true ) ) {
+	$ullmer_layout = 'marquee';
+}
+
 $ullmer_autoplay  = ! empty( $attributes['autoplay'] );
 $ullmer_pause     = ! empty( $attributes['pauseOnHover'] );
 $ullmer_speed     = isset( $attributes['marqueeSpeed'] ) ? (float) $attributes['marqueeSpeed'] : 40;
 $ullmer_direction = ( isset( $attributes['marqueeDirection'] ) && 'right' === $attributes['marqueeDirection'] ) ? 'right' : 'left';
 
 $ullmer_classes = array( 'ullmer-pill-row--' . $ullmer_layout );
+
 if ( 'marquee' === $ullmer_layout && $ullmer_autoplay ) {
 	$ullmer_classes[] = 'is-autoplay';
+}
+
+/* Ohne diese Klasse greifen die Breakpoint-Regeln nicht. */
+if ( ! isset( $attributes['responsiveScaling'] ) || ! empty( $attributes['responsiveScaling'] ) ) {
+	$ullmer_classes[] = 'is-responsive';
 }
 
 $ullmer_wrapper = get_block_wrapper_attributes(

@@ -4,11 +4,17 @@
  * Alle Werte hängen an CSS-Custom-Properties. Die Defaults hier entsprechen
  * dem Figma-Redesign; der Block schreibt die im Editor gesetzten Werte als
  * Inline-Style auf den Wrapper und überschreibt sie damit.
+ *
+ * Maße dürfen jede CSS-Einheit tragen (px, rem, em, vw, vh, %). Deshalb wird
+ * überall mit calc() gerechnet statt mit festen Pixelwerten.
  */
 
 .wp-block-ullmer-pill-row {
 	--ullmer-gap: 10px;
 	--ullmer-justify: center;
+
+	/* Responsiver Faktor, weiter unten je Breakpoint überschrieben. */
+	--ullmer-scale: 1;
 
 	--ullmer-heading-font: Merriweather, Georgia, "Times New Roman", serif;
 	--ullmer-heading-size: 40px;
@@ -42,11 +48,11 @@
 /* --- Überschrift ------------------------------------------------------- */
 
 .ullmer-pill-row__heading {
-	margin: 0 0 var(--ullmer-heading-gap);
+	margin: 0 0 calc( var(--ullmer-heading-gap) * var(--ullmer-scale) );
 	font-family: var(--ullmer-heading-font);
-	font-size: var(--ullmer-heading-size);
+	font-size: calc( var(--ullmer-heading-size) * var(--ullmer-scale) );
 	font-weight: 700;
-	line-height: var(--ullmer-heading-line-height);
+	line-height: calc( var(--ullmer-heading-line-height) * var(--ullmer-scale) );
 	letter-spacing: var(--ullmer-heading-letter-spacing);
 	text-align: center;
 	text-wrap: balance;
@@ -66,17 +72,22 @@
 
 .ullmer-pill-row__viewport {
 	position: relative;
-	overflow: hidden;
 }
 
 .ullmer-pill-row__track {
 	position: relative;
 	display: flex;
 	align-items: stretch;
-	gap: var(--ullmer-gap);
+	gap: calc( var(--ullmer-gap) * var(--ullmer-scale) );
 	margin: 0;
 	padding: 0;
 	list-style: none;
+}
+
+/* Untereinander: eine Spalte, Pills hugging, Ausrichtung über --ullmer-justify. */
+.ullmer-pill-row--stacked .ullmer-pill-row__track {
+	flex-direction: column;
+	align-items: var(--ullmer-justify);
 }
 
 /* Statisch: bricht um und bleibt in der Contentbreite. */
@@ -85,7 +96,7 @@
 	justify-content: var(--ullmer-justify);
 }
 
-/* Marquee: eine Zeile, Breite folgt dem Inhalt. */
+/* Laufband: eine Zeile, Breite folgt dem Inhalt. */
 .ullmer-pill-row--marquee .ullmer-pill-row__track {
 	flex-wrap: nowrap;
 	width: max-content;
@@ -93,11 +104,27 @@
 }
 
 /*
- * Manuell scrollbar – gesetzt von view.js, wenn Autoplay aus ist oder der
- * Nutzer reduzierte Bewegung angefordert hat.
+ * Nur das Laufband muss horizontal beschnitten werden.
+ *
+ * Wichtig: overflow-x: clip statt hidden. "hidden" zwingt die andere Achse auf
+ * "auto" und beschneidet damit auch vertikal – dabei fiel die letzte halbe
+ * Pixelzeile des unteren Rahmens weg (er sah dann 1px statt 2px stark aus),
+ * und zusätzliches Innenabstand wurde abgeschnitten. "clip" lässt
+ * overflow-y: visible unangetastet.
  */
-.ullmer-pill-row__viewport.is-scrollable {
+.ullmer-pill-row--marquee .ullmer-pill-row__viewport {
+	overflow-x: clip;
+	overflow-y: visible;
+}
+
+/*
+ * Manuell scrollbar – gesetzt von view.js, wenn Autoplay aus ist oder der
+ * Nutzer reduzierte Bewegung angefordert hat. Hier ist ein Scrollcontainer
+ * nötig, deshalb etwas Luft nach oben und unten für Fokusringe.
+ */
+.ullmer-pill-row--marquee .ullmer-pill-row__viewport.is-scrollable {
 	overflow-x: auto;
+	padding-block: 4px;
 	scrollbar-width: thin;
 	-webkit-overflow-scrolling: touch;
 }
@@ -115,9 +142,9 @@
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	padding: var(--ullmer-pill-padding-y) var(--ullmer-pill-padding-x);
+	padding: calc( var(--ullmer-pill-padding-y) * var(--ullmer-scale) ) calc( var(--ullmer-pill-padding-x) * var(--ullmer-scale) );
 	border: var(--ullmer-pill-border-width) solid var(--ullmer-pill-border-color);
-	border-radius: var(--ullmer-pill-border-radius);
+	border-radius: calc( var(--ullmer-pill-border-radius) * var(--ullmer-scale) );
 	background-color: var(--ullmer-pill-bg);
 	font-family: var(--ullmer-pill-font);
 	text-align: center;
@@ -128,7 +155,7 @@
 .ullmer-pill__title {
 	display: block;
 	color: var(--ullmer-pill-title-color);
-	font-size: var(--ullmer-pill-title-size);
+	font-size: calc( var(--ullmer-pill-title-size) * var(--ullmer-scale) );
 	font-weight: var(--ullmer-pill-title-weight);
 	line-height: 1.2;
 	text-transform: var(--ullmer-pill-title-transform);
@@ -138,9 +165,9 @@
 .ullmer-pill__description {
 	display: block;
 	color: var(--ullmer-pill-desc-color);
-	font-size: var(--ullmer-pill-desc-size);
+	font-size: calc( var(--ullmer-pill-desc-size) * var(--ullmer-scale) );
 	font-weight: 400;
-	line-height: var(--ullmer-pill-desc-line-height);
+	line-height: calc( var(--ullmer-pill-desc-line-height) * var(--ullmer-scale) );
 	text-transform: none;
 	transition: color 0.25s ease;
 }
@@ -167,18 +194,34 @@ a.wp-block-ullmer-pill:focus-visible {
 	outline-offset: 4px;
 }
 
-/* --- Responsiv --------------------------------------------------------- */
+/* --- Responsiv ---------------------------------------------------------- */
 
-@media (max-width: 781px) {
-	.wp-block-ullmer-pill-row {
-		--ullmer-heading-size: clamp(26px, 6vw, 40px);
-		--ullmer-heading-line-height: 1.3;
-		--ullmer-heading-gap: 40px;
-		--ullmer-pill-title-size: clamp(18px, 4.6vw, 33px);
-		--ullmer-pill-desc-size: clamp(14px, 3.6vw, 18px);
-		--ullmer-pill-desc-line-height: 1.6;
-		--ullmer-pill-padding-x: clamp(24px, 9vw, 72px);
-		--ullmer-pill-padding-y: clamp(20px, 6vw, 52px);
+/*
+ * Ein einziger Faktor skaliert Schrift, Innenabstände, Abstand und Radius.
+ * Das funktioniert mit jeder Einheit, auch mit rem oder vw, und lässt sich im
+ * Block abschalten.
+ */
+@media (max-width: 1200px) {
+	.wp-block-ullmer-pill-row.is-responsive {
+		--ullmer-scale: 0.82;
+	}
+}
+
+@media (max-width: 900px) {
+	.wp-block-ullmer-pill-row.is-responsive {
+		--ullmer-scale: 0.68;
+	}
+}
+
+@media (max-width: 600px) {
+	.wp-block-ullmer-pill-row.is-responsive {
+		--ullmer-scale: 0.55;
+	}
+}
+
+@media (max-width: 400px) {
+	.wp-block-ullmer-pill-row.is-responsive {
+		--ullmer-scale: 0.46;
 	}
 }
 

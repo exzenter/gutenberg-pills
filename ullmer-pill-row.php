@@ -3,7 +3,7 @@
  * Plugin Name:       Ullmer Pill-Reihe
  * Plugin URI:        https://github.com/exzenter/gutenberg-pills
  * Description:       Gutenberg-Block für eine Reihe abgerundeter Pills – statisch oder als endlos laufendes Laufband. Pro Pill Titel, Beschreibung und Link, dazu zweifarbige Überschrift, zehn Farben und rund 25 Regler im Editor. Standardwerte aus dem Ullmer-Redesign. Ohne npm, ohne Build-Step, serverseitig gerendert.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.1
  * Requires PHP:      7.4
  * Author:            exzent
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ULLMER_PILL_ROW_VERSION', '1.0.0' );
+define( 'ULLMER_PILL_ROW_VERSION', '1.1.0' );
 define( 'ULLMER_PILL_ROW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ULLMER_PILL_ROW_URL', plugin_dir_url( __FILE__ ) );
 
@@ -116,6 +116,27 @@ function ullmer_pill_row_load_textdomain() {
 }
 add_action( 'init', 'ullmer_pill_row_load_textdomain' );
 
+
+/**
+ * Normalisiert einen Maßwert zu einer CSS-Länge.
+ *
+ * Akzeptiert Zahlen (werden als Pixel interpretiert, so lagen die Werte in
+ * Version 1.0 vor) und fertige Strings mit Einheit ("2rem", "4vw", "50%").
+ *
+ * @param mixed $value    Wert aus den Blockattributen.
+ * @param mixed $fallback Standardwert, falls nichts gesetzt ist.
+ * @return string CSS-Länge inklusive Einheit.
+ */
+function ullmer_pill_row_length( $value, $fallback ) {
+	if ( null === $value || '' === $value ) {
+		$value = $fallback;
+	}
+	if ( is_numeric( $value ) ) {
+		return $value . 'px';
+	}
+	return trim( (string) $value );
+}
+
 /**
  * Baut aus den Blockattributen die CSS-Custom-Properties für den Wrapper.
  *
@@ -123,35 +144,32 @@ add_action( 'init', 'ullmer_pill_row_load_textdomain' );
  * etwas ändert, muss es dort ebenfalls ändern.
  *
  * @param array $a Blockattribute.
- * @return string Inline-Style-Deklarationen, bereits escaped-fähig.
+ * @return string Inline-Style-Deklarationen.
  */
 function ullmer_pill_row_css_vars( $a ) {
 
-	$px = static function ( $value, $fallback ) {
-		$value = ( '' === $value || null === $value ) ? $fallback : $value;
-		return ( (float) $value ) . 'px';
-	};
+	$len = 'ullmer_pill_row_length';
 
 	$vars = array(
-		'--ullmer-gap'                     => $px( $a['pillGap'] ?? null, 10 ),
+		'--ullmer-gap'                     => $len( $a['pillGap'] ?? null, '10px' ),
 		'--ullmer-justify'                 => $a['justify'] ?? 'center',
 		'--ullmer-heading-font'            => $a['headingFontFamily'] ?? '',
-		'--ullmer-heading-size'            => $px( $a['headingFontSize'] ?? null, 40 ),
-		'--ullmer-heading-line-height'     => $px( $a['headingLineHeight'] ?? null, 53 ),
-		'--ullmer-heading-letter-spacing'  => $px( $a['headingLetterSpacing'] ?? null, 0.8 ),
+		'--ullmer-heading-size'            => $len( $a['headingFontSize'] ?? null, '40px' ),
+		'--ullmer-heading-line-height'     => $len( $a['headingLineHeight'] ?? null, '53px' ),
+		'--ullmer-heading-letter-spacing'  => $len( $a['headingLetterSpacing'] ?? null, '0.8px' ),
 		'--ullmer-heading-accent-color'    => $a['headingAccentColor'] ?? '',
 		'--ullmer-heading-base-color'      => $a['headingBaseColor'] ?? '',
-		'--ullmer-heading-gap'             => $px( $a['headingGap'] ?? null, 72 ),
+		'--ullmer-heading-gap'             => $len( $a['headingGap'] ?? null, '72px' ),
 		'--ullmer-pill-font'               => $a['pillFontFamily'] ?? '',
-		'--ullmer-pill-border-width'       => $px( $a['pillBorderWidth'] ?? null, 2 ),
-		'--ullmer-pill-border-radius'      => $px( $a['pillBorderRadius'] ?? null, 100 ),
-		'--ullmer-pill-padding-x'          => $px( $a['pillPaddingX'] ?? null, 72 ),
-		'--ullmer-pill-padding-y'          => $px( $a['pillPaddingY'] ?? null, 52 ),
-		'--ullmer-pill-title-size'         => $px( $a['pillTitleFontSize'] ?? null, 33 ),
+		'--ullmer-pill-border-width'       => $len( $a['pillBorderWidth'] ?? null, '2px' ),
+		'--ullmer-pill-border-radius'      => $len( $a['pillBorderRadius'] ?? null, '100px' ),
+		'--ullmer-pill-padding-x'          => $len( $a['pillPaddingX'] ?? null, '72px' ),
+		'--ullmer-pill-padding-y'          => $len( $a['pillPaddingY'] ?? null, '52px' ),
+		'--ullmer-pill-title-size'         => $len( $a['pillTitleFontSize'] ?? null, '33px' ),
 		'--ullmer-pill-title-weight'       => (string) ( $a['pillTitleWeight'] ?? 500 ),
 		'--ullmer-pill-title-transform'    => ! empty( $a['pillTitleUppercase'] ) ? 'uppercase' : 'none',
-		'--ullmer-pill-desc-size'          => $px( $a['pillDescFontSize'] ?? null, 18 ),
-		'--ullmer-pill-desc-line-height'   => $px( $a['pillDescLineHeight'] ?? null, 35 ),
+		'--ullmer-pill-desc-size'          => $len( $a['pillDescFontSize'] ?? null, '18px' ),
+		'--ullmer-pill-desc-line-height'   => $len( $a['pillDescLineHeight'] ?? null, '35px' ),
 		'--ullmer-pill-border-color'       => $a['pillBorderColor'] ?? '',
 		'--ullmer-pill-bg'                 => $a['pillBackgroundColor'] ?? '',
 		'--ullmer-pill-title-color'        => $a['pillTitleColor'] ?? '',
