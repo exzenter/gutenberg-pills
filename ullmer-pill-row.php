@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name:       Ullmer Pill-Reihe
- * Plugin URI:        https://github.com/ullmer/ullmer-pill-row
+ * Plugin URI:        https://github.com/exzenter/gutenberg-pills
  * Description:       Gutenberg-Block für eine Reihe abgerundeter Pills – statisch oder als endlos laufendes Laufband. Pro Pill Titel, Beschreibung und Link, dazu zweifarbige Überschrift, zehn Farben und rund 25 Regler im Editor. Standardwerte aus dem Ullmer-Redesign. Ohne npm, ohne Build-Step, serverseitig gerendert.
  * Version:           1.0.0
  * Requires at least: 6.1
  * Requires PHP:      7.4
- * Author:            Ullmer
+ * Author:            exzent
+ * Author URI:        https://exzent.de/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       ullmer-pill-row

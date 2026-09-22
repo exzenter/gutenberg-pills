@@ -193,6 +193,13 @@ ullmer-pill-row/
 
 ---
 
+## Hersteller
+
+Entwickelt und vertrieben von **exzent** — <https://exzent.de/>
+
+Das Design stammt aus dem Ullmer-Website-Redesign. Die Bezeichner im Code (`ullmer/pill-row`,
+`--ullmer-*`, `.wp-block-ullmer-pill`) benennen dieses Projekt und sind keine Herstellerangabe.
+
 ## Lizenz
 
-GPL-2.0-or-later
+GPL-2.0-or-later · © exzent

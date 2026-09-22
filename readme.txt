@@ -1,5 +1,5 @@
 === Ullmer Pill-Reihe ===
-Contributors: ullmer
+Contributors: exzent
 Tags: block, gutenberg, pills, marquee, slider
 Requires at least: 6.1
 Tested up to: 6.7
