@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Ullmer Pill-Reihe
  * Plugin URI:        https://github.com/ullmer/ullmer-pill-row
- * Description:       Gutenberg-Block für eine Reihe abgerundeter Pills – statisch oder als endlos laufender Marquee. Standardwerte entsprechen dem Ullmer-Website-Redesign, alles ist im Editor überschreibbar.
+ * Description:       Gutenberg-Block für eine Reihe abgerundeter Pills – statisch oder als endlos laufendes Laufband. Pro Pill Titel, Beschreibung und Link, dazu zweifarbige Überschrift, zehn Farben und rund 25 Regler im Editor. Standardwerte aus dem Ullmer-Redesign. Ohne npm, ohne Build-Step, serverseitig gerendert.
  * Version:           1.0.0
  * Requires at least: 6.1
  * Requires PHP:      7.4
